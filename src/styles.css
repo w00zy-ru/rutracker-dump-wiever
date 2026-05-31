@@ -1,0 +1,312 @@
+/* --- ГЛОБАЛЬНЫЕ НАСТРОЙКИ ОКНА ТАУРИ --- */
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important; /* Полностью убирает двойной скролл приложения */
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f8f9fa;
+  box-sizing: border-box;
+  padding: 20px; /* Ваши оригинальные внешние отступы от краев экрана */
+  
+  /* Переводим body в вертикальный контейнер */
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- ВЕРХНЯЯ ПАНЕЛЬ ШАПКИ (ВАШ ОРИГИНАЛЬНЫЙ СТИЛЬ) --- */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-shrink: 0; /* Запрещает шапке сжиматься */
+}
+
+.header-container h2 {
+  margin: 0;
+  color: #343a40;
+}
+
+.header-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* ИНТЕРАКТИВНЫЙ ПОИСК */
+.search-box-container {
+  display: flex;
+  gap: 10px;
+}
+
+/* СТИЛИ ДЛЯ ПОЛЕЙ ВВОДА И СЕЛЕКТОВ */
+input[type="text"], select {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+input[type="text"] {
+  width: 280px;
+}
+
+/* СТИЛИ КНОПОК */
+button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #e2e6ea;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}
+
+.btn-action {
+  background-color: #6c757d;
+  color: #fff;
+  border-color: #6c757d;
+}
+
+.btn-action:hover {
+  background-color: #5a6268;
+}
+
+/* КНОПКА-ШЕСТЕРЕНКА НАСТРОЕК */
+.settings-menu-container {
+  position: relative;
+}
+
+.btn-settings {
+  font-size: 18px;
+  padding: 4px 10px;
+}
+
+/* ВЫПАДАЮЩАЯ ПАНЕЛЬ СЕТТИНГОВ */
+.settings-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 5px;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 100;
+  display: none; /* Управляется через JS */
+  width: 260px;
+}
+
+.settings-dropdown.show {
+  display: block;
+}
+
+.control-group {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.control-group:last-child {
+  margin-bottom: 0;
+}
+
+.control-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.btn-browse {
+  width: 100%;
+  background-color: #17a2b8;
+  color: #fff;
+  border-color: #17a2b8;
+}
+
+.btn-browse:hover {
+  background-color: #138496;
+}
+
+/* --- ГЛАВНЫЙ ЭКРАН ТАБЛИЦЫ --- */
+#listViewContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Занимает ВСЮ оставшуюся высоту экрана */
+  min-height: 0; /* Позволяет корректно сжиматься внутренним блокам */
+}
+
+/* Кнопки быстрой выборки */
+.quick-buttons {
+  margin-bottom: 15px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-shrink: 0; /* Запрещает кнопкам сжиматься */
+}
+
+.quick-buttons-label {
+  font-weight: bold;
+  font-size: 14px;
+  color: #495057;
+}
+
+.active-preset {
+  background-color: #28a745 !important;
+  color: #fff !important;
+  border-color: #28a745 !important;
+}
+
+/* --- ИСПРАВЛЕННЫЙ АВТО-КОНТЕЙНЕР ТАБЛИЦЫ --- */
+.table-container {
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background-color: #fff;
+  
+  /* Умное распределение: контейнер гибко сжимается/растет под размер монитора */
+  flex-grow: 1;
+  min-height: 0; 
+  overflow-y: auto !important; /* Скроллбар появляется СТРОГО здесь */
+  overflow-x: auto;
+  margin-bottom: 15px;
+}
+
+/* Стили самой таблицы */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* ФИКСАЦИЯ ШАПКИ ТАБЛИЦЫ ПРИ СКРОЛЛЕ */
+th {
+  background-color: #f1f3f5;
+  font-weight: 600;
+  text-align: left;
+  padding: 10px;
+  border-bottom: 2px solid #dee2e6;
+  cursor: pointer;
+  user-select: none;
+  
+  /* Шапка стоит на месте, пока строки катятся вниз */
+  position: sticky !important;
+  top: 0;
+  z-index: 10;
+}
+
+th:hover {
+  background-color: #e2e6ea;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #dee2e6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+/* Стили для строк (чередование цветов 1 в 1) */
+.data-row.row-even {
+  background-color: #f1f3f5;
+}
+
+.data-row.row-odd {
+  background-color: #ffffff;
+}
+
+.data-row:hover {
+  background-color: #e9ecef !important;
+}
+
+/* Ссылка на торрент */
+.torrent-link {
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.torrent-link:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+/* --- ПАНЕЛЬ ПАГИНАЦИИ (ВСЕГДА ВНИЗУ ОКНА) --- */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #6c757d;
+  background-color: #f8f9fa;
+  padding-top: 5px;
+  flex-shrink: 0; /* Никогда не улетает за пределы видимости */
+}
+
+.pagination-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+/* Пути к базам данных */
+.db-info {
+  margin-top: 15px;
+  font-size: 12px;
+  color: #6c757d;
+  flex-shrink: 0;
+}
+
+/* Спиннер загрузки для кнопки поиска */
+.btn-search-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.btn-search-loading::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid #fff;
+  border-top-color: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  animation: button-spin 0.6s linear infinite;
+}
+
+@keyframes button-spin {
+  to { transform: rotate(360deg); }
+}

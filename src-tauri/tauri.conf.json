@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.tauri.app/config/2",
+    "productName": "infotor-tau",
+    "identifier": "com.w00zy.infotor-tau",
+    "build": {
+        "frontendDist": "../src"
+    },
+    "app": {
+        "withGlobalTauri": true,
+        "windows": [
+            {
+                "title": "infotor-tau",
+                "width": 1366,
+                "height": 768
+            }
+        ],
+        "security": {
+            "csp": null
+        }
+    },
+    "bundle": {
+        "active": true,
+        "targets": "deb",
+        "resources": [],
+        "icon": ["icons/infotor-tau.png"]
+    }
+}

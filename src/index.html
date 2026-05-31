@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tau-infotor</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/card.css">
+</head>
+
+<body>
+
+  <!-- ВЕРХНЯЯ ПАНЕЛЬ ШАПКИ -->
+  <div class="header-container">
+    <h2>infotor-tau</h2>
+
+    <div class="header-right">
+      <!-- ИНТЕРАКТИВНЫЙ ПОИСК -->
+      <div class="search-box-container">
+        <input type="text" id="searchInput" placeholder="Поиск по названию раздачи...">
+        <button id="btnSearch" class="btn-primary">🔍 Найти</button>
+      </div>
+
+      <!-- КНОПКА-ШЕСТЕРЕНКА НАСТРОЕК -->
+      <div class="settings-menu-container">
+        <button id="btnToggleSettings" class="btn-settings" title="Настройки интерфейса">⚙️</button>
+
+        <!-- ВЫПАДАЮЩАЯ ПАНЕЛЬ СЕТТИНГОВ -->
+        <div id="settingsDropdown" class="settings-dropdown">
+          <div class="control-group">
+            <label>Синхронизация</label>
+            <button id="btnBrowseDb" class="btn-browse">📂 Импорт базы DB3</button>
+          </div>
+          <div class="control-group">
+            <label for="categorySelect">Категория</label>
+            <select id="categorySelect">
+              <option value="">Все категории</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="forumSelect">Форум</label>
+            <select id="forumSelect">
+              <option value="">Все форумы</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="limitSelect">Строк на страницу</label>
+            <select id="limitSelect">
+              <option value="10">10 строк</option>
+              <option value="20" selected>20 строк</option>
+              <option value="50">50 строк</option>
+              <option value="100">100 строк</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ГЛАВНЫЙ ЭКРАН ТАБЛИЦЫ -->
+  <div id="listViewContainer">
+    <!-- Кнопки быстрой выборки -->
+    <div class="quick-buttons">
+      <span class="quick-buttons-label">Быстрые выборки:</span>
+      <button id="btnAll" class="active-preset">Все раздачи</button>
+      <button id="btnRecent">Свежие (последний месяц)</button>
+      <button id="btnLarge">Крупные (> 10 ГБ)</button>
+      <button id="btnSmall">Мелкие (< 500 МБ)</button>
+    </div>
+
+    <!-- Таблица (4 колонки, без действий) -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr id="tableHeader"></tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr>
+            <td colspan="100%" style="text-align:center; padding:30px; color:#6c757d;">Загрузка конфигурации...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Пагинация -->
+    <div class="pagination">
+      <div class="page-info" id="pageInfo">Загрузка информации...</div>
+      <div class="pagination-buttons">
+        <button id="prevBtn" disabled>◀ Назад</button>
+        <button id="nextBtn" disabled>Вперед ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- КОНТЕЙНЕР ДЛЯ ДЕТАЛЬНОЙ КАРТОЧКИ (СКРЫТ ПО УМОЛЧАНИЮ) -->
+  <div id="detailsViewContainer" style="display: none;"></div>
+  <template id="torrentDetailsTemplate">
+    <div class="details-layout-wrapper">
+
+      <!-- Шапка детального вида с кнопкой назад -->
+      <div class="details-header">
+        <button class="btn-back" data-action="back">◀ Назад к списку</button>
+        <h3 class="details-main-title" data-field="title"></h3>
+      </div>
+
+      <!-- Основной контент карточки -->
+      <div class="details-content-scroll">
+        <div class="details-cards-grid">
+
+          <!-- Карточка 1: Главные характеристики -->
+          <div class="info-card">
+            <div class="info-card-title">основные данные</div>
+            <div class="info-row">
+              <span class="info-label">Размер данных</span>
+              <span class="info-value text-bold" data-field="size"></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Дата регистрации</span>
+              <span class="info-value" data-field="date"></span>
+            </div>
+          </div>
+
+          <!-- Карточка 2: Классификация раздачи -->
+          <div class="info-card">
+            <div class="info-card-title">размещение</div>
+            <div class="info-row">
+              <span class="info-label">Категория</span>
+              <span class="info-value text-badge-cat" data-field="category"></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Форум (Подраздел)</span>
+              <span class="info-value" data-field="forum"></span>
+            </div>
+          </div>
+
+          <!-- Карточка 3: Технические системные ключи (на всю ширину) -->
+          <div class="info-card col-span-full">
+            <div class="info-card-title">техническая информация</div>
+            <div class="tech-row">
+              <span class="tech-label">ID раздачи (file_id)</span>
+              <div class="tech-code" data-field="id"></div>
+            </div>
+            <div class="tech-row">
+              <span class="tech-label">Инфо-Хэш (hash_info)</span>
+              <div class="tech-code" data-field="hash"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Нижняя панель действий (Зафиксирована снизу) -->
+      <div class="details-footer-actions">
+        <button class="btn-action-primary" data-action="magnet">🧲 Запустить Magnet</button>
+        <button class="btn-action-secondary" data-action="copy">📋 Копировать ссылку</button>
+        <button class="btn-action-outline" data-action="web">🌐 Открыть в браузере</button>
+      </div>
+
+    </div>
+  </template>
+
+
+  <!-- Шаблон состояния загрузки (импорта) -->
+  <template id="importLoadingTemplate">
+    <tr>
+      <td colspan="100%" class="table-status-cell table-status-loading">
+        <div class="loader-wrapper">
+          <div class="spinner"></div>
+          <span>🚀 Запущен процесс импорта. Пожалуйста, подождите, это занимает некоторое время...</span>
+        </div>
+      </td>
+    </tr>
+  </template>
+
+  <!-- Шаблон состояния ошибки -->
+  <template id="importErrorTemplate">
+    <tr>
+      <td colspan="100%" class="table-status-cell table-status-error">
+        <span>Ошибка импорта: </span>
+        <strong data-field="error-text"></strong>
+      </td>
+    </tr>
+  </template>
+  <!-- Шаблон процесса поиска данных -->
+  <template id="tableSearchingTemplate">
+    <tr>
+      <td colspan="100%" class="table-search-status">
+        <span>🔍 Идет поиск в базе, пожалуйста, подождите...</span>
+      </td>
+    </tr>
+  </template>
+
+  <!-- Шаблон ошибки базы данных -->
+  <template id="tableDbErrorTemplate">
+    <tr>
+      <td colspan="100%" class="table-db-error">
+        <span>Ошибка базы: </span>
+        <strong data-field="error-text"></strong>
+      </td>
+    </tr>
+  </template>
+  <!-- Шаблон: Пустой результат поиска -->
+  <template id="tableEmptyTemplate">
+    <tr>
+      <td colspan="100%" class="table-empty-status">Ничего не найдено</td>
+    </tr>
+  </template>
+
+  <!-- Шаблон: Строка заголовка категории -->
+  <template id="tableCategoryGroupTemplate">
+    <tr class="category-group-row">
+      <td class="category-group-cell" data-field="category-name"></td>
+    </tr>
+  </template>
+
+  <!-- Шаблон: Строка данных торрента -->
+  <template id="tableDataRowTemplate">
+    <tr class="data-row">
+      <td class="col-title"><a class="torrent-link" data-field="title"></a></td>
+      <td class="col-size" data-field="size"></td>
+      <td class="col-date" data-field="date"></td>
+      <td class="col-forum" data-field="forum"></td>
+    </tr>
+  </template>
+  <!-- Шаблон для вывода информации о текущей странице -->
+  <template id="paginationInfoTemplate">
+    <span class="pagination-info-text">
+      Страница <strong data-field="current"></strong> из <strong data-field="max"></strong>
+      (Всего торрентов: <strong data-field="total"></strong>)
+    </span>
+  </template>
+  <!-- Шаблон для опции выбора форума -->
+  <template id="forumOptionTemplate">
+    <option data-field="forum-item"></option>
+  </template>
+  <script type="module" src="/main.js"></script>
+</body>
+
+</html>

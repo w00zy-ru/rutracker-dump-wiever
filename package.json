@@ -1,0 +1,18 @@
+{
+    "name": "infotor-tau",
+    "private": true,
+    "version": "0.1.3",
+    "type": "module",
+    "scripts": {
+        "tauri": "tauri"
+    },
+    "devDependencies": {
+        "@tauri-apps/cli": "^2"
+    },
+    "dependencies": {
+        "@tauri-apps/plugin-clipboard-manager": "^2.3.2",
+        "@tauri-apps/plugin-dialog": "^2.7.1",
+        "@tauri-apps/plugin-sql": "^2.4.0",
+        "@tauri-apps/plugin-store": "^2.4.3"
+    }
+}
